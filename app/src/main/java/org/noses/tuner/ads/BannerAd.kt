@@ -1,5 +1,6 @@
 package org.noses.tuner.ads
 
+import android.view.ViewGroup
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.key
@@ -22,6 +23,9 @@ fun BannerAd(modifier: Modifier = Modifier) {
     val adView = remember(widthDp) {
         AdView(context).apply {
             adUnitId = BANNER_AD_UNIT_ID
+            // A focused ad WebView that gets swapped out on refresh crashes the next draw with
+            // "parameter must be a descendant of this view". Taps still work without focus.
+            descendantFocusability = ViewGroup.FOCUS_BLOCK_DESCENDANTS
             setAdSize(AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(context, widthDp))
             loadAd(AdRequest.Builder().build())
         }
