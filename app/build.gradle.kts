@@ -8,7 +8,7 @@ android {
     compileSdk = 37
 
     defaultConfig {
-        applicationId = "org.noses.tuner"
+        applicationId = "org.noses.onthenose"
         minSdk = 26
         targetSdk = 37
         versionCode = 1
