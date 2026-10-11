@@ -42,6 +42,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.noses.tuner.ads.BannerAd
 import org.noses.tuner.audio.pitchFlow
+import org.noses.tuner.ui.TunerDisplay
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -78,7 +79,7 @@ fun TunerApp() {
                 contentAlignment = Alignment.Center,
             ) {
                 if (hasMicPermission) {
-                    FrequencyReadout()
+                    LiveTuner()
                 } else {
                     MicPermissionPrompt(
                         onRequest = { permissionLauncher.launch(Manifest.permission.RECORD_AUDIO) },
@@ -90,14 +91,10 @@ fun TunerApp() {
 }
 
 @Composable
-private fun FrequencyReadout() {
+private fun LiveTuner() {
     // Collecting with the lifecycle releases the microphone whenever the app is backgrounded.
     val frequency by remember { pitchFlow() }.collectAsStateWithLifecycle(initialValue = null)
-    Text(
-        text = frequency?.let { stringResource(R.string.frequency_hz, it) }
-            ?: stringResource(R.string.no_pitch),
-        style = MaterialTheme.typography.displayLarge,
-    )
+    TunerDisplay(frequency)
 }
 
 @Composable

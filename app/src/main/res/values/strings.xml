@@ -4,4 +4,9 @@
     <string name="mic_grant">Allow microphone</string>
     <string name="no_pitch">—</string>
     <string name="frequency_hz">%1$.1f Hz</string>
+    <string name="flat">Flat</string>
+    <string name="sharp">Sharp</string>
+    <string name="in_tune">In tune</string>
+    <string name="play_a_note">Play a note</string>
+    <string name="cents_offset">%1$+d¢</string>
 </resources>
