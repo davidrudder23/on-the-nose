@@ -3,12 +3,27 @@
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
-    <!-- Tuning fork -->
+    <!-- Face in profile; the nose is the needle -->
+    <path
+        android:fillColor="#F2E9DC"
+        android:pathData="M-2,-7 L35,-7 C41,5 43,17 38,27 C42,35 54,43 59,48 C63,52 61,59 54,59 C49,59 45,59 42,61 C39,69 40,81 44,89 C46,95 42,103 40,111 L-2,111 Z" />
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#1B1B1F"
+        android:strokeWidth="2.5"
+        android:strokeLineCap="round"
+        android:pathData="M47,52 C42,47 36,52 40,58" />
+    <!-- Gauge ticks; the nose points at dead centre -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#8B8B96"
+        android:strokeWidth="3.5"
+        android:strokeLineCap="round"
+        android:pathData="M67.24,32.50 L71.57,30.00 M70.41,39.29 L75.11,37.58 M72.35,46.53 L77.27,45.66 M72.35,61.47 L77.27,62.34 M70.41,68.71 L75.11,70.42 M67.24,75.50 L71.57,78.00" />
     <path
         android:fillColor="#00000000"
         android:strokeColor="#7CE38B"
         android:strokeWidth="5"
         android:strokeLineCap="round"
-        android:strokeLineJoin="round"
-        android:pathData="M44,32 L44,54 A10,10 0 0 0 64,54 L64,32 M54,64 L54,78" />
+        android:pathData="M69.00,54.00 L79.00,54.00" />
 </vector>
