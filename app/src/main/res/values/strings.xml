@@ -9,4 +9,14 @@
     <string name="in_tune">In tune</string>
     <string name="play_a_note">Play a note</string>
     <string name="cents_offset">%1$+d¢</string>
+    <string name="string_number">String %1$d</string>
+    <string name="tuning_button">%1$s ▾</string>
+    <string name="tuning_with_notes">%1$s · %2$s</string>
+    <string name="tuning_chromatic">Chromatic</string>
+    <string name="tuning_standard">Standard</string>
+    <string name="tuning_drop_d">Drop D</string>
+    <string name="tuning_half_step_down">Half step down</string>
+    <string name="tuning_open_g">Open G</string>
+    <string name="tuning_open_d">Open D</string>
+    <string name="tuning_dadgad">DADGAD</string>
 </resources>

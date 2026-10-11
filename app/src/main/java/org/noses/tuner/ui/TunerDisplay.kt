@@ -35,6 +35,7 @@ import kotlin.math.roundToInt
 import kotlin.math.sin
 import org.noses.tuner.R
 import org.noses.tuner.audio.NoteReading
+import org.noses.tuner.audio.Tuning
 import org.noses.tuner.audio.nearestNote
 
 private const val MAX_CENTS = 50f
@@ -46,13 +47,13 @@ private const val SWEEP_DEGREES = 60f
 private val InTuneGreen = Color(0xFF2EA043)
 
 /**
- * Shows the note nearest to [frequency] and a needle gauge of how flat or sharp it is.
- * When [frequency] is null the last reading stays on screen, dimmed.
+ * Shows the note [frequency] should be tuned towards in [tuning], its string number, and a needle
+ * gauge of how flat or sharp it is. When [frequency] is null the last reading stays on screen, dimmed.
  */
 @Composable
-fun TunerDisplay(frequency: Float?, modifier: Modifier = Modifier) {
-    val reading = remember(frequency) { frequency?.let(::nearestNote) }
-    var held by remember { mutableStateOf<NoteReading?>(null) }
+fun TunerDisplay(frequency: Float?, tuning: Tuning, modifier: Modifier = Modifier) {
+    val reading = remember(frequency, tuning) { frequency?.let { nearestNote(it, tuning) } }
+    var held by remember(tuning) { mutableStateOf<NoteReading?>(null) }
     LaunchedEffect(reading) { if (reading != null) held = reading }
 
     val shown = reading ?: held
@@ -84,6 +85,11 @@ fun TunerDisplay(frequency: Float?, modifier: Modifier = Modifier) {
                 )
             }
         }
+        Text(
+            text = shown?.string?.let { stringResource(R.string.string_number, it) } ?: "",
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
 
         Gauge(cents = shown?.cents ?: 0f, needleColor = accent, modifier = Modifier.fillMaxWidth())
 

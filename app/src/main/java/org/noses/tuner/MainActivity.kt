@@ -1,6 +1,7 @@
 package org.noses.tuner
 
 import android.Manifest
+import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -41,8 +42,12 @@ import com.google.android.gms.ads.MobileAds
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.noses.tuner.ads.BannerAd
+import org.noses.tuner.audio.Tuning
 import org.noses.tuner.audio.pitchFlow
 import org.noses.tuner.ui.TunerDisplay
+import org.noses.tuner.ui.TuningPicker
+
+private const val TUNING_KEY = "tuning"
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -94,7 +99,25 @@ fun TunerApp() {
 private fun LiveTuner() {
     // Collecting with the lifecycle releases the microphone whenever the app is backgrounded.
     val frequency by remember { pitchFlow() }.collectAsStateWithLifecycle(initialValue = null)
-    TunerDisplay(frequency)
+
+    val context = LocalContext.current
+    val settings = remember { context.getSharedPreferences("settings", Context.MODE_PRIVATE) }
+    var tuning by remember {
+        val saved = settings.getString(TUNING_KEY, null)
+        mutableStateOf(Tuning.entries.find { it.name == saved } ?: Tuning.STANDARD)
+    }
+
+    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        TuningPicker(
+            selected = tuning,
+            onSelect = {
+                tuning = it
+                settings.edit().putString(TUNING_KEY, it.name).apply()
+            },
+            modifier = Modifier.align(Alignment.TopCenter).padding(top = 8.dp),
+        )
+        TunerDisplay(frequency, tuning)
+    }
 }
 
 @Composable

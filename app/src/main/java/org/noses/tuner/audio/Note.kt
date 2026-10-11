@@ -1,5 +1,6 @@
 package org.noses.tuner.audio
 
+import kotlin.math.abs
 import kotlin.math.log2
 import kotlin.math.pow
 import kotlin.math.roundToInt
@@ -7,28 +8,41 @@ import kotlin.math.roundToInt
 private val NOTE_NAMES = arrayOf("C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B")
 private const val A4_MIDI = 69
 
-/** The equal-tempered note nearest to a measured frequency, and how far the measurement is from it. */
+/** The name of a MIDI note without its octave, such as "C#". */
+fun noteName(midi: Int): String = NOTE_NAMES[Math.floorMod(midi, 12)]
+
+/** The note a measured frequency is being tuned towards, and how far the measurement is from it. */
 data class NoteReading(
     val name: String,
     val octave: Int,
+    /** Guitar string number, counting from 1 at the highest-pitched string. Null when chromatic. */
+    val string: Int?,
     /** Frequency of the note itself, in Hz. */
     val noteFrequency: Float,
     /** The measured frequency, in Hz. */
     val frequency: Float,
-    /** Offset from the note in cents: negative is flat, positive is sharp. Always within ±50. */
+    /**
+     * Offset from the note in cents: negative is flat, positive is sharp. Within ±50 when
+     * chromatic, but unbounded when the nearest string of a tuning is further away than that.
+     */
     val cents: Float,
 )
 
-/** Finds the note nearest to [frequency] (which must be positive), tuned relative to [a4] Hz. */
-fun nearestNote(frequency: Float, a4: Float = 440f): NoteReading {
+/**
+ * Finds the note to tune [frequency] (which must be positive) towards: the nearest open string
+ * of [tuning], or the nearest note of any kind when chromatic. Pitches are relative to [a4] Hz.
+ */
+fun nearestNote(frequency: Float, tuning: Tuning = Tuning.CHROMATIC, a4: Float = 440f): NoteReading {
     require(frequency > 0f)
     val midi = A4_MIDI + 12 * log2(frequency / a4)
-    val nearest = midi.roundToInt()
+    val stringIndex = tuning.strings.indices.minByOrNull { abs(tuning.strings[it] - midi) }
+    val target = stringIndex?.let { tuning.strings[it] } ?: midi.roundToInt()
     return NoteReading(
-        name = NOTE_NAMES[Math.floorMod(nearest, 12)],
-        octave = Math.floorDiv(nearest, 12) - 1,
-        noteFrequency = a4 * 2f.pow((nearest - A4_MIDI) / 12f),
+        name = noteName(target),
+        octave = Math.floorDiv(target, 12) - 1,
+        string = stringIndex?.let { tuning.strings.size - it },
+        noteFrequency = a4 * 2f.pow((target - A4_MIDI) / 12f),
         frequency = frequency,
-        cents = (midi - nearest) * 100,
+        cents = (midi - target) * 100,
     )
 }
