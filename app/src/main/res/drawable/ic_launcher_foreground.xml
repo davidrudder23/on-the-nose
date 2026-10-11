@@ -1,0 +1,14 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Tuning fork -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#7CE38B"
+        android:strokeWidth="5"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M44,32 L44,54 A10,10 0 0 0 64,54 L64,32 M54,64 L54,78" />
+</vector>
