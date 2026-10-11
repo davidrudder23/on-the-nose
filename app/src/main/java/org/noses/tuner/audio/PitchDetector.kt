@@ -21,7 +21,10 @@ class PitchDetector(
         require(integrationSize > maxLag) { "windowSize too small for minFrequency" }
     }
 
-    /** Returns the detected frequency in Hz, or null if the window is silent or unpitched. */
+    /**
+     * Returns the detected frequency in Hz, or null if the window is silent, unpitched, or pitched
+     * outside the detector's frequency range.
+     */
     fun detect(samples: FloatArray): Float? {
         require(samples.size >= windowSize)
 
@@ -43,10 +46,14 @@ class PitchDetector(
         }
 
         // First dip below the threshold, followed down to its local minimum.
-        var lag = minLag
+        var lag = 2
         while (lag <= maxLag && diff[lag] >= THRESHOLD) lag++
         if (lag > maxLag) return null
         while (lag < maxLag && diff[lag + 1] < diff[lag]) lag++
+
+        // A period shorter than minLag is too high. A dip still falling at maxLag has its
+        // minimum somewhere beyond it, so the pitch is too low.
+        if (lag < minLag || lag == maxLag) return null
 
         return sampleRate / interpolate(lag)
     }
