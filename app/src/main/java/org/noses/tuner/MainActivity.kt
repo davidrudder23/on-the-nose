@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
@@ -37,11 +36,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.lifecycleScope
-import com.google.android.gms.ads.MobileAds
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import org.noses.tuner.ads.BannerAd
 import org.noses.tuner.audio.Tuning
 import org.noses.tuner.audio.pitchFlow
 import org.noses.tuner.ui.TunerDisplay
@@ -53,7 +47,6 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        lifecycleScope.launch(Dispatchers.IO) { MobileAds.initialize(this@MainActivity) }
         setContent { TunerApp() }
     }
 }
@@ -76,9 +69,7 @@ fun TunerApp() {
     }
 
     MaterialTheme(colorScheme = if (isSystemInDarkTheme()) darkColorScheme() else lightColorScheme()) {
-        Scaffold(
-            bottomBar = { BannerAd(Modifier.fillMaxWidth().navigationBarsPadding()) },
-        ) { innerPadding ->
+        Scaffold { innerPadding ->
             Box(
                 modifier = Modifier.fillMaxSize().padding(innerPadding),
                 contentAlignment = Alignment.Center,
@@ -107,16 +98,18 @@ private fun LiveTuner() {
         mutableStateOf(Tuning.entries.find { it.name == saved } ?: Tuning.STANDARD)
     }
 
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+    Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
         TuningPicker(
             selected = tuning,
             onSelect = {
                 tuning = it
                 settings.edit().putString(TUNING_KEY, it.name).apply()
             },
-            modifier = Modifier.align(Alignment.TopCenter).padding(top = 8.dp),
+            modifier = Modifier.padding(top = 8.dp),
         )
-        TunerDisplay(frequency, tuning)
+        Box(Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
+            TunerDisplay(frequency, tuning)
+        }
     }
 }
 

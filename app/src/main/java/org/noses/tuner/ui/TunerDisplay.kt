@@ -94,7 +94,8 @@ fun TunerDisplay(frequency: Float?, tuning: Tuning, modifier: Modifier = Modifie
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
 
-        Gauge(cents = shown?.cents ?: 0f, needleColor = accent, modifier = Modifier.fillMaxWidth())
+        // The gauge is the only flexible part, so it shrinks when the screen is short (landscape).
+        Gauge(cents = shown?.cents ?: 0f, needleColor = accent, modifier = Modifier.weight(1f, fill = false))
 
         Row(
             modifier = Modifier.fillMaxWidth(),
