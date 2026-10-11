@@ -21,7 +21,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
@@ -48,7 +47,7 @@ private val InTuneGreen = Color(0xFF2EA043)
 
 /**
  * Shows the note [frequency] should be tuned towards in [tuning], its string number, and a needle
- * gauge of how flat or sharp it is. When [frequency] is null the last reading stays on screen, dimmed.
+ * gauge of how flat or sharp it is. When [frequency] is null the last reading stays on screen.
  */
 @Composable
 fun TunerDisplay(frequency: Float?, tuning: Tuning, modifier: Modifier = Modifier) {
@@ -64,8 +63,7 @@ fun TunerDisplay(frequency: Float?, tuning: Tuning, modifier: Modifier = Modifie
         modifier = modifier
             .widthIn(max = 420.dp)
             .fillMaxWidth()
-            .padding(horizontal = 24.dp)
-            .alpha(if (reading != null) 1f else 0.4f),
+            .padding(horizontal = 24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
