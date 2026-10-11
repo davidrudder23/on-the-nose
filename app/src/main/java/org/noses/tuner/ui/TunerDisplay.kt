@@ -44,6 +44,7 @@ private const val IN_TUNE_CENTS = 5f
 private const val SWEEP_DEGREES = 60f
 
 private val InTuneGreen = Color(0xFF2EA043)
+private val OutOfTuneRed = Color(0xFFE5484D)
 
 /**
  * Shows the note [frequency] should be tuned towards in [tuning], its string number, and a needle
@@ -58,6 +59,10 @@ fun TunerDisplay(frequency: Float?, tuning: Tuning, modifier: Modifier = Modifie
     val shown = reading ?: held
     val inTune = shown != null && abs(shown.cents) <= IN_TUNE_CENTS
     val accent = if (inTune) InTuneGreen else MaterialTheme.colorScheme.onSurface
+    // Each label turns red while the needle sits outside the green zone on its side.
+    val labelColor = MaterialTheme.colorScheme.onSurface
+    val flatColor = if (shown != null && shown.cents < -IN_TUNE_CENTS) OutOfTuneRed else labelColor
+    val sharpColor = if (shown != null && shown.cents > IN_TUNE_CENTS) OutOfTuneRed else labelColor
 
     Column(
         modifier = modifier
@@ -96,7 +101,7 @@ fun TunerDisplay(frequency: Float?, tuning: Tuning, modifier: Modifier = Modifie
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Text(stringResource(R.string.flat), style = MaterialTheme.typography.labelLarge)
+            Text(stringResource(R.string.flat), style = MaterialTheme.typography.labelLarge, color = flatColor)
             Text(
                 text = when {
                     shown == null -> stringResource(R.string.play_a_note)
@@ -106,7 +111,7 @@ fun TunerDisplay(frequency: Float?, tuning: Tuning, modifier: Modifier = Modifie
                 style = MaterialTheme.typography.titleLarge,
                 color = accent,
             )
-            Text(stringResource(R.string.sharp), style = MaterialTheme.typography.labelLarge)
+            Text(stringResource(R.string.sharp), style = MaterialTheme.typography.labelLarge, color = sharpColor)
         }
 
         Text(
