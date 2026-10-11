@@ -14,5 +14,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "tuner"
+rootProject.name = "on-the-nose"
 include(":app")
