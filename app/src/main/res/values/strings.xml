@@ -18,5 +18,7 @@
     <string name="tuning_half_step_down">Half step down</string>
     <string name="tuning_open_g">Open G</string>
     <string name="tuning_open_d">Open D</string>
+    <string name="tuning_open_e_minor">Open E minor</string>
+    <string name="tuning_open_d_minor">Open D minor</string>
     <string name="tuning_dadgad">DADGAD</string>
 </resources>

@@ -51,6 +51,13 @@ class TuningTest {
     }
 
     @Test
+    fun openMinorTuningsSpellMinorChords() {
+        fun notes(tuning: Tuning) = tuning.strings.map(::noteName)
+        assertEquals(listOf("E", "B", "E", "G", "B", "E"), notes(Tuning.OPEN_E_MINOR))
+        assertEquals(listOf("D", "A", "D", "F", "A", "D"), notes(Tuning.OPEN_D_MINOR))
+    }
+
+    @Test
     fun chromaticHasNoString() {
         val reading = nearestNote(cents(261.63, 5), Tuning.CHROMATIC)
         assertEquals("C", reading.name)

@@ -53,6 +53,8 @@ private fun tuningLabel(tuning: Tuning): String {
             Tuning.HALF_STEP_DOWN -> R.string.tuning_half_step_down
             Tuning.OPEN_G -> R.string.tuning_open_g
             Tuning.OPEN_D -> R.string.tuning_open_d
+            Tuning.OPEN_E_MINOR -> R.string.tuning_open_e_minor
+            Tuning.OPEN_D_MINOR -> R.string.tuning_open_d_minor
             Tuning.DADGAD -> R.string.tuning_dadgad
         }
     )
