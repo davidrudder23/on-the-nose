@@ -51,10 +51,21 @@ class TuningTest {
     }
 
     @Test
-    fun openMinorTuningsSpellMinorChords() {
-        fun notes(tuning: Tuning) = tuning.strings.map(::noteName)
-        assertEquals(listOf("E", "B", "E", "G", "B", "E"), notes(Tuning.OPEN_E_MINOR))
-        assertEquals(listOf("D", "A", "D", "F", "A", "D"), notes(Tuning.OPEN_D_MINOR))
+    fun tuningsSpellTheirNotes() {
+        val expected = mapOf(
+            Tuning.STANDARD to "E2 A2 D3 G3 B3 E4",
+            Tuning.DROP_D to "D2 A2 D3 G3 B3 E4",
+            Tuning.HALF_STEP_DOWN to "D#2 G#2 C#3 F#3 A#3 D#4",
+            Tuning.OPEN_G to "D2 G2 D3 G3 B3 D4",
+            Tuning.OPEN_D to "D2 A2 D3 F#3 A3 D4",
+            Tuning.OPEN_E_MINOR to "E2 B2 E3 G3 B3 E4",
+            Tuning.OPEN_D_MINOR to "D2 A2 D3 F3 A3 D4",
+            Tuning.DADGAD to "D2 A2 D3 G3 A3 D4",
+        )
+        for (tuning in Tuning.entries.filter { it != Tuning.CHROMATIC }) {
+            val spelled = tuning.strings.joinToString(" ") { noteName(it) + (Math.floorDiv(it, 12) - 1) }
+            assertEquals(tuning.name, expected[tuning], spelled)
+        }
     }
 
     @Test
