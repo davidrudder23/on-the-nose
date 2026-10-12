@@ -29,7 +29,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -98,9 +97,11 @@ private enum class AppView(@StringRes val label: Int) {
 private fun AppViews() {
     // Collecting with the lifecycle releases the microphone whenever the app is backgrounded.
     val frequency by remember { pitchFlow() }.collectAsStateWithLifecycle(initialValue = null)
-    // Neither choice is stored, so every launch starts on the tuner with the chromatic scale.
-    var view by rememberSaveable { mutableStateOf(AppView.TUNER) }
-    var tuning by rememberSaveable { mutableStateOf(Tuning.CHROMATIC) }
+    // Deliberately not saved anywhere, not even in saved instance state: every time the app is
+    // opened it starts on the tuner with the chromatic scale. Rotation keeps these because the
+    // manifest stops the activity being recreated for it.
+    var view by remember { mutableStateOf(AppView.TUNER) }
+    var tuning by remember { mutableStateOf(Tuning.CHROMATIC) }
 
     Column(Modifier.fillMaxSize()) {
         PrimaryTabRow(selectedTabIndex = view.ordinal) {
