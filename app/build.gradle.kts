@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "org.noses.tuner"
+    namespace = "org.noses.onthenose"
     compileSdk = 37
 
     defaultConfig {

@@ -1,4 +1,4 @@
-package org.noses.tuner.audio
+package org.noses.onthenose.audio
 
 import kotlin.math.pow
 import org.junit.Assert.assertEquals

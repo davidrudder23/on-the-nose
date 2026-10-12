@@ -42,4 +42,4 @@ The debug APK is written to `app/build/outputs/apk/debug/app-debug.apk`. The app
 - `audio/Note.kt` and `audio/Tuning.kt` turn a frequency into the note to tune towards and the offset from it in cents.
 - `ui/` holds the Jetpack Compose screen: the gauge and the tuning picker.
 
-The app ID is `org.noses.onthenose`. The Kotlin package is `org.noses.tuner`, from the project's original name.
+The app ID and the Kotlin package are both `org.noses.onthenose`.
