@@ -1,4 +1,4 @@
-package org.noses.tuner.audio
+package org.noses.onthenose.audio
 
 /**
  * The notes a guitar's open strings are tuned to, as MIDI note numbers from the lowest-pitched

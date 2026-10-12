@@ -1,4 +1,4 @@
-package org.noses.tuner
+package org.noses.onthenose
 
 import android.Manifest
 import android.content.pm.PackageManager
@@ -38,11 +38,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import org.noses.tuner.audio.Tuning
-import org.noses.tuner.audio.pitchFlow
-import org.noses.tuner.ui.TunerDisplay
-import org.noses.tuner.ui.TuningPicker
-import org.noses.tuner.ui.VoiceTraining
+import org.noses.onthenose.audio.Tuning
+import org.noses.onthenose.audio.pitchFlow
+import org.noses.onthenose.ui.TunerDisplay
+import org.noses.onthenose.ui.TuningPicker
+import org.noses.onthenose.ui.VoiceTraining
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

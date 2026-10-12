@@ -1,4 +1,4 @@
-package org.noses.tuner.ui
+package org.noses.onthenose.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -25,11 +25,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import kotlin.random.Random
 import kotlinx.coroutines.launch
-import org.noses.tuner.R
-import org.noses.tuner.audio.midiFrequency
-import org.noses.tuner.audio.noteInNearestOctave
-import org.noses.tuner.audio.noteName
-import org.noses.tuner.audio.playTone
+import org.noses.onthenose.R
+import org.noses.onthenose.audio.midiFrequency
+import org.noses.onthenose.audio.noteInNearestOctave
+import org.noses.onthenose.audio.noteName
+import org.noses.onthenose.audio.playTone
 
 /** MIDI number of C4. The target note is played in the octave above it, which phone speakers carry well. */
 private const val PLAYBACK_OCTAVE = 60

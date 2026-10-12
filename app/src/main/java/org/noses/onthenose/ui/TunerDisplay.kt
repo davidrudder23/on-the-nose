@@ -1,4 +1,4 @@
-package org.noses.tuner.ui
+package org.noses.onthenose.ui
 
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
@@ -32,10 +32,10 @@ import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.roundToInt
 import kotlin.math.sin
-import org.noses.tuner.R
-import org.noses.tuner.audio.NoteReading
-import org.noses.tuner.audio.Tuning
-import org.noses.tuner.audio.nearestNote
+import org.noses.onthenose.R
+import org.noses.onthenose.audio.NoteReading
+import org.noses.onthenose.audio.Tuning
+import org.noses.onthenose.audio.nearestNote
 
 private const val MAX_CENTS = 50f
 private const val IN_TUNE_CENTS = 5f

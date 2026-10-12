@@ -1,4 +1,4 @@
-package org.noses.tuner.audio
+package org.noses.onthenose.audio
 
 import android.media.AudioAttributes
 import android.media.AudioFormat

@@ -47,4 +47,4 @@ The debug APK is written to `app/build/outputs/apk/debug/app-debug.apk`. The app
 
 The app always opens on the tuner with the chromatic scale; it does not store any settings.
 
-The app ID is `org.noses.onthenose`. The Kotlin package is `org.noses.tuner`, from the project's original name.
+The app ID and the Kotlin package are both `org.noses.onthenose`.
