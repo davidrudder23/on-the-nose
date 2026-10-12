@@ -9,6 +9,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.StringRes
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -18,7 +19,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
@@ -27,6 +30,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,6 +44,7 @@ import org.noses.tuner.audio.Tuning
 import org.noses.tuner.audio.pitchFlow
 import org.noses.tuner.ui.TunerDisplay
 import org.noses.tuner.ui.TuningPicker
+import org.noses.tuner.ui.VoiceTraining
 
 private const val TUNING_KEY = "tuning"
 
@@ -75,7 +80,7 @@ fun TunerApp() {
                 contentAlignment = Alignment.Center,
             ) {
                 if (hasMicPermission) {
-                    LiveTuner()
+                    AppViews()
                 } else {
                     MicPermissionPrompt(
                         onRequest = { permissionLauncher.launch(Manifest.permission.RECORD_AUDIO) },
@@ -86,11 +91,39 @@ fun TunerApp() {
     }
 }
 
+/** The screens the app switches between, in tab order. */
+private enum class AppView(@StringRes val label: Int) {
+    TUNER(R.string.view_tuner),
+    VOICE_TRAINING(R.string.view_voice_training),
+}
+
 @Composable
-private fun LiveTuner() {
+private fun AppViews() {
     // Collecting with the lifecycle releases the microphone whenever the app is backgrounded.
     val frequency by remember { pitchFlow() }.collectAsStateWithLifecycle(initialValue = null)
+    var view by rememberSaveable { mutableStateOf(AppView.TUNER) }
 
+    Column(Modifier.fillMaxSize()) {
+        PrimaryTabRow(selectedTabIndex = view.ordinal) {
+            for (entry in AppView.entries) {
+                Tab(
+                    selected = view == entry,
+                    onClick = { view = entry },
+                    text = { Text(stringResource(entry.label)) },
+                )
+            }
+        }
+        Box(Modifier.weight(1f).fillMaxWidth()) {
+            when (view) {
+                AppView.TUNER -> GuitarTuner(frequency)
+                AppView.VOICE_TRAINING -> VoiceTraining(frequency)
+            }
+        }
+    }
+}
+
+@Composable
+private fun GuitarTuner(frequency: Float?) {
     val context = LocalContext.current
     val settings = remember { context.getSharedPreferences("settings", Context.MODE_PRIVATE) }
     var tuning by remember {

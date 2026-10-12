@@ -21,4 +21,10 @@
     <string name="tuning_open_e_minor">Open E minor</string>
     <string name="tuning_open_d_minor">Open D minor</string>
     <string name="tuning_dadgad">DADGAD</string>
+    <string name="view_tuner">Tuner</string>
+    <string name="view_voice_training">Voice training</string>
+    <string name="sing_this_note">Sing this note</string>
+    <string name="sing_the_note">Sing the note</string>
+    <string name="play_note">Play note</string>
+    <string name="new_note">New note</string>
 </resources>
