@@ -1,7 +1,6 @@
 package org.noses.tuner
 
 import android.Manifest
-import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -45,8 +44,6 @@ import org.noses.tuner.audio.pitchFlow
 import org.noses.tuner.ui.TunerDisplay
 import org.noses.tuner.ui.TuningPicker
 import org.noses.tuner.ui.VoiceTraining
-
-private const val TUNING_KEY = "tuning"
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -101,7 +98,9 @@ private enum class AppView(@StringRes val label: Int) {
 private fun AppViews() {
     // Collecting with the lifecycle releases the microphone whenever the app is backgrounded.
     val frequency by remember { pitchFlow() }.collectAsStateWithLifecycle(initialValue = null)
+    // Neither choice is stored, so every launch starts on the tuner with the chromatic scale.
     var view by rememberSaveable { mutableStateOf(AppView.TUNER) }
+    var tuning by rememberSaveable { mutableStateOf(Tuning.CHROMATIC) }
 
     Column(Modifier.fillMaxSize()) {
         PrimaryTabRow(selectedTabIndex = view.ordinal) {
@@ -115,7 +114,7 @@ private fun AppViews() {
         }
         Box(Modifier.weight(1f).fillMaxWidth()) {
             when (view) {
-                AppView.TUNER -> GuitarTuner(frequency)
+                AppView.TUNER -> GuitarTuner(frequency, tuning, onTuningChange = { tuning = it })
                 AppView.VOICE_TRAINING -> VoiceTraining(frequency)
             }
         }
@@ -123,21 +122,11 @@ private fun AppViews() {
 }
 
 @Composable
-private fun GuitarTuner(frequency: Float?) {
-    val context = LocalContext.current
-    val settings = remember { context.getSharedPreferences("settings", Context.MODE_PRIVATE) }
-    var tuning by remember {
-        val saved = settings.getString(TUNING_KEY, null)
-        mutableStateOf(Tuning.entries.find { it.name == saved } ?: Tuning.STANDARD)
-    }
-
+private fun GuitarTuner(frequency: Float?, tuning: Tuning, onTuningChange: (Tuning) -> Unit) {
     Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
         TuningPicker(
             selected = tuning,
-            onSelect = {
-                tuning = it
-                settings.edit().putString(TUNING_KEY, it.name).apply()
-            },
+            onSelect = onTuningChange,
             modifier = Modifier.padding(top = 8.dp),
         )
         Box(Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
