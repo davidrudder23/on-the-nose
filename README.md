@@ -1,6 +1,14 @@
 # On The Nose
 
-A guitar tuner and voice trainer for Android. It listens through the phone's microphone, works out the note being played or sung, and shows how flat or sharp it is on a needle gauge.
+On The Nose is a basic guitar tuner app with voice training.  I struggled to 
+find a decent tuner app. Ads, wifi required, sign-up needed, etc.  
+
+I figured "I can probably vibe code one up in half a day".  So, I did.  
+
+I added something I've always wanted - a little game that allows me to train 
+my voice.  It shows a note and you try to sing it.  
+
+I hope you enjoy this!
 
 <img src="docs/screenshots/tuner.png" alt="The tuner showing B3 on string 2, 56 cents flat" width="270"> <img src="docs/screenshots/voice-training.png" alt="Voice training asking for the note D, with Play note and New note buttons" width="270">
 
@@ -36,6 +44,23 @@ You need JDK 21 and the Android SDK (platform 37, build-tools 37.0.0). Point `AN
 ```
 
 The debug APK is written to `app/build/outputs/apk/debug/app-debug.apk`. The app runs on Android 8.0 (API 26) and newer.
+
+### Release build
+
+Google Play takes a signed app bundle. Create an upload keystore, keep it outside the repository, and describe it in `~/.gradle/gradle.properties`:
+
+```
+ONTHENOSE_STORE_FILE=/path/to/upload.jks
+ONTHENOSE_STORE_PASSWORD=...
+ONTHENOSE_KEY_ALIAS=upload
+ONTHENOSE_KEY_PASSWORD=...
+```
+
+```
+./gradlew bundleRelease        # build the signed release bundle
+```
+
+The bundle is written to `app/build/outputs/bundle/release/app-release.aab`. Raise `versionCode` in `app/build.gradle.kts` before each upload. Without the properties above, the release build is left unsigned.
 
 ## How it works
 
