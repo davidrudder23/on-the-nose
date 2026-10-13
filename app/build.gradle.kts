@@ -15,11 +15,24 @@ android {
         versionName = "0.1.0"
     }
 
+    signingConfigs {
+        create("release") {
+            val store = providers.gradleProperty("ONTHENOSE_STORE_FILE").orNull
+            if (store != null) {
+                storeFile = file(store)
+                storePassword = providers.gradleProperty("ONTHENOSE_STORE_PASSWORD").get()
+                keyAlias = providers.gradleProperty("ONTHENOSE_KEY_ALIAS").get()
+                keyPassword = providers.gradleProperty("ONTHENOSE_KEY_PASSWORD").get()
+            }
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            signingConfig = signingConfigs.getByName("release")
         }
     }
 

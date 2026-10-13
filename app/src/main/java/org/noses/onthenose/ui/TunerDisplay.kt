@@ -48,12 +48,28 @@ private val OutOfTuneRed = Color(0xFFE5484D)
 
 /**
  * Shows the note [frequency] should be tuned towards in [tuning], its string number, and a needle
- * gauge of how flat or sharp it is. When [frequency] is null the last reading stays on screen.
+ * gauge of how flat or sharp it is.
  */
 @Composable
 fun TunerDisplay(frequency: Float?, tuning: Tuning, modifier: Modifier = Modifier) {
     val reading = remember(frequency, tuning) { frequency?.let { nearestNote(it, tuning) } }
-    var held by remember(tuning) { mutableStateOf<NoteReading?>(null) }
+    NoteGauge(reading, holdKey = tuning, modifier = modifier)
+}
+
+/**
+ * Shows the note of [reading] with a needle gauge of how flat or sharp it is. When [reading] is
+ * null the last one stays on screen, until [holdKey] changes. Before there is any reading,
+ * [idleName] stands in for the note and [idleHint] for the offset.
+ */
+@Composable
+fun NoteGauge(
+    reading: NoteReading?,
+    holdKey: Any?,
+    modifier: Modifier = Modifier,
+    idleName: String = stringResource(R.string.no_pitch),
+    idleHint: String = stringResource(R.string.play_a_note),
+) {
+    var held by remember(holdKey) { mutableStateOf<NoteReading?>(null) }
     LaunchedEffect(reading) { if (reading != null) held = reading }
 
     val shown = reading ?: held
@@ -74,7 +90,7 @@ fun TunerDisplay(frequency: Float?, tuning: Tuning, modifier: Modifier = Modifie
     ) {
         Row {
             Text(
-                text = shown?.name ?: stringResource(R.string.no_pitch),
+                text = shown?.name ?: idleName,
                 style = MaterialTheme.typography.displayLarge,
                 color = accent,
                 modifier = Modifier.alignByBaseline(),
@@ -105,7 +121,7 @@ fun TunerDisplay(frequency: Float?, tuning: Tuning, modifier: Modifier = Modifie
             Text(stringResource(R.string.flat), style = MaterialTheme.typography.labelLarge, color = flatColor)
             Text(
                 text = when {
-                    shown == null -> stringResource(R.string.play_a_note)
+                    shown == null -> idleHint
                     inTune -> stringResource(R.string.in_tune)
                     else -> stringResource(R.string.cents_offset, shown.cents.roundToInt())
                 },

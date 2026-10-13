@@ -1,7 +1,6 @@
 package org.noses.onthenose
 
 import android.Manifest
-import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -9,6 +8,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.StringRes
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -18,7 +18,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
@@ -40,8 +42,7 @@ import org.noses.onthenose.audio.Tuning
 import org.noses.onthenose.audio.pitchFlow
 import org.noses.onthenose.ui.TunerDisplay
 import org.noses.onthenose.ui.TuningPicker
-
-private const val TUNING_KEY = "tuning"
+import org.noses.onthenose.ui.VoiceTraining
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -75,7 +76,7 @@ fun TunerApp() {
                 contentAlignment = Alignment.Center,
             ) {
                 if (hasMicPermission) {
-                    LiveTuner()
+                    AppViews()
                 } else {
                     MicPermissionPrompt(
                         onRequest = { permissionLauncher.launch(Manifest.permission.RECORD_AUDIO) },
@@ -86,25 +87,47 @@ fun TunerApp() {
     }
 }
 
+/** The screens the app switches between, in tab order. */
+private enum class AppView(@StringRes val label: Int) {
+    TUNER(R.string.view_tuner),
+    VOICE_TRAINING(R.string.view_voice_training),
+}
+
 @Composable
-private fun LiveTuner() {
+private fun AppViews() {
     // Collecting with the lifecycle releases the microphone whenever the app is backgrounded.
     val frequency by remember { pitchFlow() }.collectAsStateWithLifecycle(initialValue = null)
+    // Deliberately not saved anywhere, not even in saved instance state: every time the app is
+    // opened it starts on the tuner with the chromatic scale. Rotation keeps these because the
+    // manifest stops the activity being recreated for it.
+    var view by remember { mutableStateOf(AppView.TUNER) }
+    var tuning by remember { mutableStateOf(Tuning.CHROMATIC) }
 
-    val context = LocalContext.current
-    val settings = remember { context.getSharedPreferences("settings", Context.MODE_PRIVATE) }
-    var tuning by remember {
-        val saved = settings.getString(TUNING_KEY, null)
-        mutableStateOf(Tuning.entries.find { it.name == saved } ?: Tuning.STANDARD)
+    Column(Modifier.fillMaxSize()) {
+        PrimaryTabRow(selectedTabIndex = view.ordinal) {
+            for (entry in AppView.entries) {
+                Tab(
+                    selected = view == entry,
+                    onClick = { view = entry },
+                    text = { Text(stringResource(entry.label)) },
+                )
+            }
+        }
+        Box(Modifier.weight(1f).fillMaxWidth()) {
+            when (view) {
+                AppView.TUNER -> GuitarTuner(frequency, tuning, onTuningChange = { tuning = it })
+                AppView.VOICE_TRAINING -> VoiceTraining(frequency)
+            }
+        }
     }
+}
 
+@Composable
+private fun GuitarTuner(frequency: Float?, tuning: Tuning, onTuningChange: (Tuning) -> Unit) {
     Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
         TuningPicker(
             selected = tuning,
-            onSelect = {
-                tuning = it
-                settings.edit().putString(TUNING_KEY, it.name).apply()
-            },
+            onSelect = onTuningChange,
             modifier = Modifier.padding(top = 8.dp),
         )
         Box(Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
