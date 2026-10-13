@@ -1,4 +1,4 @@
-package org.noses.tuner.ui
+package org.noses.onthenose.ui
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.material3.DropdownMenu
@@ -13,9 +13,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import org.noses.tuner.R
-import org.noses.tuner.audio.Tuning
-import org.noses.tuner.audio.noteName
+import org.noses.onthenose.R
+import org.noses.onthenose.audio.Tuning
+import org.noses.onthenose.audio.noteName
 
 /** A button showing the [selected] tuning that opens a menu of all tunings. */
 @Composable
