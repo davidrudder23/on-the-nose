@@ -10,7 +10,7 @@ my voice.  It shows a note and you try to sing it.
 
 I hope you enjoy this!
 
-<img src="docs/screenshots/tuner.png" alt="The tuner showing B3 on string 2, 56 cents flat" width="270"> <img src="docs/screenshots/voice-training.png" alt="The voice trainer asking for the note D, with Play note and New note buttons" width="270">
+<img src="docs/screenshots/tuner.png" alt="The tuner showing B3 on string 2, 56 cents flat" width="270"> <img src="docs/screenshots/voice-training.png" alt="The voice trainer asking for the note D, with Play note and New note buttons" width="270"> <img src="docs/screenshots/strum_tuner.jpg" alt="The strum tuner in standard tuning: the low E, A and D strings 6 to 8 cents flat, the other three in tune" width="270">
 
 ## Features
 
