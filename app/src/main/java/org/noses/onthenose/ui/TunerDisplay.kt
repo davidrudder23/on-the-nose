@@ -38,13 +38,13 @@ import org.noses.onthenose.audio.Tuning
 import org.noses.onthenose.audio.nearestNote
 
 private const val MAX_CENTS = 50f
-private const val IN_TUNE_CENTS = 5f
+internal const val IN_TUNE_CENTS = 5f
 
 /** Degrees the needle swings either side of vertical at ±[MAX_CENTS]. */
 private const val SWEEP_DEGREES = 60f
 
-private val InTuneGreen = Color(0xFF2EA043)
-private val OutOfTuneRed = Color(0xFFE5484D)
+internal val InTuneGreen = Color(0xFF2EA043)
+internal val OutOfTuneRed = Color(0xFFE5484D)
 
 /**
  * Shows the note [frequency] should be tuned towards in [tuning], its string number, and a needle

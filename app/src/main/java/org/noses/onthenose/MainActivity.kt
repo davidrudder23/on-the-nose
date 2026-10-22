@@ -2,6 +2,7 @@ package org.noses.onthenose
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -32,6 +33,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -40,6 +42,8 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.noses.onthenose.audio.Tuning
 import org.noses.onthenose.audio.pitchFlow
+import org.noses.onthenose.audio.stringsFlow
+import org.noses.onthenose.ui.AllStrings
 import org.noses.onthenose.ui.TunerDisplay
 import org.noses.onthenose.ui.TuningPicker
 import org.noses.onthenose.ui.VoiceTraining
@@ -90,16 +94,16 @@ fun TunerApp() {
 /** The screens the app switches between, in tab order. */
 private enum class AppView(@StringRes val label: Int) {
     TUNER(R.string.view_tuner),
+    ALL_STRINGS(R.string.view_all_strings),
     VOICE_TRAINING(R.string.view_voice_training),
 }
 
 @Composable
 private fun AppViews() {
-    // Collecting with the lifecycle releases the microphone whenever the app is backgrounded.
-    val frequency by remember { pitchFlow() }.collectAsStateWithLifecycle(initialValue = null)
     // Deliberately not saved anywhere, not even in saved instance state: every time the app is
     // opened it starts on the tuner with the chromatic scale. Rotation keeps these because the
-    // manifest stops the activity being recreated for it.
+    // manifest stops the activity being recreated for it. The tuner and the all-strings view
+    // share the tuning, so picking one in either carries over to the other.
     var view by remember { mutableStateOf(AppView.TUNER) }
     var tuning by remember { mutableStateOf(Tuning.CHROMATIC) }
 
@@ -114,9 +118,22 @@ private fun AppViews() {
             }
         }
         Box(Modifier.weight(1f).fillMaxWidth()) {
-            when (view) {
-                AppView.TUNER -> GuitarTuner(frequency, tuning, onTuningChange = { tuning = it })
-                AppView.VOICE_TRAINING -> VoiceTraining(frequency)
+            if (view == AppView.ALL_STRINGS) {
+                // Chromatic has no strings to show, so this view falls back to standard tuning.
+                AllStringsTuner(
+                    tuning = if (tuning.hasStrings) tuning else Tuning.STANDARD,
+                    onTuningChange = { tuning = it },
+                )
+            } else {
+                // Collecting with the lifecycle releases the microphone whenever the app is
+                // backgrounded. The tuner and voice training share this, so switching between
+                // them keeps the microphone open.
+                val frequency by remember { pitchFlow() }.collectAsStateWithLifecycle(initialValue = null)
+                when (view) {
+                    AppView.TUNER -> GuitarTuner(frequency, tuning, onTuningChange = { tuning = it })
+                    AppView.VOICE_TRAINING -> VoiceTraining(frequency)
+                    AppView.ALL_STRINGS -> Unit
+                }
             }
         }
     }
@@ -133,6 +150,29 @@ private fun GuitarTuner(frequency: Float?, tuning: Tuning, onTuningChange: (Tuni
         Box(Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
             TunerDisplay(frequency, tuning)
         }
+    }
+}
+
+@Composable
+private fun AllStringsTuner(tuning: Tuning, onTuningChange: (Tuning) -> Unit) {
+    val frequencies by remember(tuning) { stringsFlow(tuning) }
+        .collectAsStateWithLifecycle(initialValue = emptyList())
+    Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
+        TuningPicker(
+            selected = tuning,
+            onSelect = onTuningChange,
+            modifier = Modifier.padding(top = 8.dp),
+            options = Tuning.entries.filter { it.hasStrings },
+        )
+        // Landscape needs every bit of height for the gauges.
+        if (LocalConfiguration.current.orientation != Configuration.ORIENTATION_LANDSCAPE) {
+            Text(
+                text = stringResource(R.string.strum_all_strings),
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+        AllStrings(frequencies, tuning, Modifier.weight(1f))
     }
 }
 

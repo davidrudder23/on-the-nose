@@ -29,6 +29,8 @@ I hope you enjoy this!
   | Open D minor | D A D F A D |
   | DADGAD | D A D G A D |
 
+- **All strings.** Strum all six strings and see every string at once, one row each. A row of seven lights shows how far off the string is: green in the middle when in tune, then amber, orange and red the further flat (left) or sharp (right) it is. It uses the same tunings as the tuner (not Chromatic). Standard, Drop D and Half step down read every string from a strum. In the open tunings, strings an octave apart share overtones and pull each other's readings unless both are close to in tune, so pluck those one at a time for big corrections.
+
 - **Voice training.** A second view picks a random note for you to sing and shows how close you are on the same gauge. Any octave counts, so it suits any vocal range. **Play note** sounds the target so you can hear it, and **New note** picks another.
 
 - **Private.** Audio is analysed on the device and never recorded or sent anywhere. The app has no ads, no analytics and no internet permission. See the [privacy policy](https://davidrudder23.github.io/on-the-nose/privacy/).

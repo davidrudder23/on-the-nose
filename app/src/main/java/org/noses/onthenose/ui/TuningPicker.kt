@@ -17,9 +17,14 @@ import org.noses.onthenose.R
 import org.noses.onthenose.audio.Tuning
 import org.noses.onthenose.audio.noteName
 
-/** A button showing the [selected] tuning that opens a menu of all tunings. */
+/** A button showing the [selected] tuning that opens a menu of [options], all tunings by default. */
 @Composable
-fun TuningPicker(selected: Tuning, onSelect: (Tuning) -> Unit, modifier: Modifier = Modifier) {
+fun TuningPicker(
+    selected: Tuning,
+    onSelect: (Tuning) -> Unit,
+    modifier: Modifier = Modifier,
+    options: List<Tuning> = Tuning.entries,
+) {
     var expanded by remember { mutableStateOf(false) }
     Box(modifier) {
         TextButton(onClick = { expanded = true }) {
@@ -29,7 +34,7 @@ fun TuningPicker(selected: Tuning, onSelect: (Tuning) -> Unit, modifier: Modifie
             )
         }
         DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-            for (tuning in Tuning.entries) {
+            for (tuning in options) {
                 DropdownMenuItem(
                     text = { Text(tuningLabel(tuning)) },
                     onClick = {
