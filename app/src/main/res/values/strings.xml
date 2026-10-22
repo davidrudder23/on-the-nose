@@ -22,8 +22,8 @@
     <string name="tuning_open_d_minor">Open D minor</string>
     <string name="tuning_dadgad">DADGAD</string>
     <string name="view_tuner">Tuner</string>
-    <string name="view_voice_training">Voice training</string>
-    <string name="view_all_strings">All strings</string>
+    <string name="view_voice_training">Voice trainer</string>
+    <string name="view_all_strings">Strum tuner</string>
     <string name="strum_all_strings">Strum all six strings</string>
     <string name="cents_flat">%1$d¢ flat</string>
     <string name="cents_sharp">%1$d¢ sharp</string>

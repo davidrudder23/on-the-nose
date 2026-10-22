@@ -1,6 +1,6 @@
 # On The Nose
 
-On The Nose is a basic guitar tuner app with voice training.  I struggled to 
+On The Nose is a basic guitar tuner app with a voice trainer.  I struggled to 
 find a decent tuner app. Ads, wifi required, sign-up needed, etc.  
 
 I figured "I can probably vibe code one up in half a day".  So, I did.  
@@ -10,7 +10,7 @@ my voice.  It shows a note and you try to sing it.
 
 I hope you enjoy this!
 
-<img src="docs/screenshots/tuner.png" alt="The tuner showing B3 on string 2, 56 cents flat" width="270"> <img src="docs/screenshots/voice-training.png" alt="Voice training asking for the note D, with Play note and New note buttons" width="270">
+<img src="docs/screenshots/tuner.png" alt="The tuner showing B3 on string 2, 56 cents flat" width="270"> <img src="docs/screenshots/voice-training.png" alt="The voice trainer asking for the note D, with Play note and New note buttons" width="270">
 
 ## Features
 
@@ -29,9 +29,9 @@ I hope you enjoy this!
   | Open D minor | D A D F A D |
   | DADGAD | D A D G A D |
 
-- **All strings.** Strum all six strings and see every string at once, one row each. A row of seven lights shows how far off the string is: green in the middle when in tune, then amber, orange and red the further flat (left) or sharp (right) it is. It uses the same tunings as the tuner (not Chromatic). Standard, Drop D and Half step down read every string from a strum. In the open tunings, strings an octave apart share overtones and pull each other's readings unless both are close to in tune, so pluck those one at a time for big corrections.
+- **Strum tuner.** Strum all six strings and see every string at once, one row each. A row of seven lights shows how far off the string is: green in the middle when in tune, then amber, orange and red the further flat (left) or sharp (right) it is. It uses the same tunings as the tuner (not Chromatic), and picking one in either carries over to the other. Standard, Drop D and Half step down read every string from a strum. In the open tunings, strings an octave apart share overtones and pull each other's readings unless both are close to in tune, so pluck those one at a time for big corrections.
 
-- **Voice training.** A second view picks a random note for you to sing and shows how close you are on the same gauge. Any octave counts, so it suits any vocal range. **Play note** sounds the target so you can hear it, and **New note** picks another.
+- **Voice trainer.** A third view picks a random note for you to sing and shows how close you are on the same gauge. Any octave counts, so it suits any vocal range. **Play note** sounds the target so you can hear it, and **New note** picks another.
 
 - **Private.** Audio is analysed on the device and never recorded or sent anywhere. The app has no ads, no analytics and no internet permission. See the [privacy policy](https://davidrudder23.github.io/on-the-nose/privacy/).
 
@@ -67,10 +67,11 @@ The bundle is written to `app/build/outputs/bundle/release/app-release.aab`. Rai
 ## How it works
 
 - `audio/PitchDetector.kt` estimates the fundamental frequency with the YIN algorithm. It has no Android dependencies, so it is unit tested on the JVM with synthesized tones.
-- `audio/PitchSource.kt` reads the microphone and emits a stream of detected pitches. The microphone is released whenever the app is in the background.
+- `audio/StringsDetector.kt` measures all six strings of a tuning at once for the strum tuner, from the overtones of each string in the spectrum. Like the pitch detector, it is unit tested with synthesized strums.
+- `audio/PitchSource.kt` reads the microphone and emits a stream of detected pitches, or of string readings for the strum tuner. The microphone is released whenever the app is in the background.
 - `audio/Note.kt` and `audio/Tuning.kt` turn a frequency into the note to tune towards and the offset from it in cents.
-- `audio/Tone.kt` and `audio/TonePlayer.kt` generate and play the target note for voice training.
-- `ui/` holds the Jetpack Compose screens: the gauge shared by both views, the tuning picker, and voice training.
+- `audio/Tone.kt` and `audio/TonePlayer.kt` generate and play the target note for the voice trainer.
+- `ui/` holds the Jetpack Compose screens: the gauge shared by the tuner and the voice trainer, the tuning picker, the strum tuner, and the voice trainer.
 
 The app always opens on the tuner with the chromatic scale; it does not store any settings.
 
