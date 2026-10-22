@@ -8,21 +8,42 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.conflate
+import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.isActive
 
 private const val SAMPLE_RATE = 44100
-private const val HOP_SIZE = 1024
+private const val PITCH_HOP_SIZE = 1024
+private const val STRINGS_HOP_SIZE = 2048
 
 /**
  * Records from the microphone while collected and emits the detected pitch in Hz
- * (null when nothing pitched is heard) roughly every [HOP_SIZE] samples.
+ * (null when nothing pitched is heard) about 43 times a second.
  * The caller must hold RECORD_AUDIO.
  */
-@SuppressLint("MissingPermission")
 fun pitchFlow(): Flow<Float?> = flow {
     val detector = PitchDetector(SAMPLE_RATE)
+    emitAll(micWindows(detector.windowSize, PITCH_HOP_SIZE).map(detector::detect))
+}.flowOn(Dispatchers.Default).conflate()
+
+/**
+ * Records from the microphone while collected and emits the measured frequency in Hz of each
+ * string of [tuning], lowest first (null for a string not heard), about 21 times a second.
+ * The caller must hold RECORD_AUDIO.
+ */
+fun stringsFlow(tuning: Tuning): Flow<List<Float?>> = flow {
+    val detector = StringsDetector(SAMPLE_RATE, tuning.strings.map { midiFrequency(it) })
+    emitAll(micWindows(detector.windowSize, STRINGS_HOP_SIZE).map(detector::detect))
+}.flowOn(Dispatchers.Default).conflate()
+
+/**
+ * Emits the latest [windowSize] samples from the microphone every [hopSize] samples. Each window
+ * is a fresh array. Windows the collector is too slow for are dropped, so recording never stalls.
+ */
+@SuppressLint("MissingPermission")
+private fun micWindows(windowSize: Int, hopSize: Int): Flow<FloatArray> = flow {
     val minBufferBytes = AudioRecord.getMinBufferSize(
         SAMPLE_RATE, AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_FLOAT,
     )
@@ -32,26 +53,26 @@ fun pitchFlow(): Flow<Float?> = flow {
         SAMPLE_RATE,
         AudioFormat.CHANNEL_IN_MONO,
         AudioFormat.ENCODING_PCM_FLOAT,
-        maxOf(minBufferBytes, detector.windowSize * Float.SIZE_BYTES),
+        maxOf(minBufferBytes, windowSize * Float.SIZE_BYTES),
     )
     try {
         if (record.state != AudioRecord.STATE_INITIALIZED) return@flow
         record.startRecording()
 
-        val window = FloatArray(detector.windowSize)
-        val hop = FloatArray(HOP_SIZE)
+        val window = FloatArray(windowSize)
+        val hop = FloatArray(hopSize)
         while (currentCoroutineContext().isActive) {
             var filled = 0
-            while (filled < HOP_SIZE) {
-                val read = record.read(hop, filled, HOP_SIZE - filled, AudioRecord.READ_BLOCKING)
+            while (filled < hopSize) {
+                val read = record.read(hop, filled, hopSize - filled, AudioRecord.READ_BLOCKING)
                 if (read <= 0) return@flow
                 filled += read
             }
-            System.arraycopy(window, HOP_SIZE, window, 0, window.size - HOP_SIZE)
-            System.arraycopy(hop, 0, window, window.size - HOP_SIZE, HOP_SIZE)
-            emit(detector.detect(window))
+            System.arraycopy(window, hopSize, window, 0, window.size - hopSize)
+            System.arraycopy(hop, 0, window, window.size - hopSize, hopSize)
+            emit(window.copyOf())
         }
     } finally {
         record.release()
     }
-}.flowOn(Dispatchers.Default).conflate()
+}.flowOn(Dispatchers.IO).conflate()

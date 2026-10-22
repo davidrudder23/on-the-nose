@@ -13,5 +13,8 @@ enum class Tuning(val strings: List<Int>) {
     OPEN_D(listOf(38, 45, 50, 54, 57, 62)),
     OPEN_E_MINOR(listOf(40, 47, 52, 55, 59, 64)),
     OPEN_D_MINOR(listOf(38, 45, 50, 53, 57, 62)),
-    DADGAD(listOf(38, 45, 50, 55, 57, 62)),
+    DADGAD(listOf(38, 45, 50, 55, 57, 62));
+
+    /** True for every tuning except [CHROMATIC]. */
+    val hasStrings: Boolean get() = strings.isNotEmpty()
 }
